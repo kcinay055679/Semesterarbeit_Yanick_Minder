@@ -203,7 +203,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.4831029, y: 0.6829109}
+  m_Size: {x: 0.48, y: 0.6829109}
   m_EdgeRadius: 0
 --- !u!212 &47464551
 SpriteRenderer:
@@ -242,8 +242,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -591235073
-  m_SortingLayer: 2
+  m_SortingLayerID: 254867967
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 855356652f382b7489f0b326ad481b14, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -283,8 +283,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.0122458935}
-  m_Size: {x: 0.48310292, y: 1.0074873}
+  m_Offset: {x: 0, y: 0}
+  m_Size: {x: 0.48, y: 1}
   m_Direction: 0
 --- !u!1 &519420028
 GameObject:
