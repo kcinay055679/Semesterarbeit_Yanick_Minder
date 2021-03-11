@@ -12,7 +12,8 @@ public class NormMovement : MonoBehaviour
     public Joystick joystick;
     public Button Jump;
 
-    float verticalmovement;
+    float horizontalmovementpc;
+    float horizontalmovementphone;
     private Rigidbody2D rigid;
 
 
@@ -20,10 +21,8 @@ public class NormMovement : MonoBehaviour
     void Start()
     {
         rigid = GetComponent<Rigidbody2D>();
-        //Jump = GetComponent<Button>();
         Button btn = Jump.GetComponent<Button>();
         btn.onClick.AddListener(TaskOnClick);
-        //Jump.onClick.AddListener(TaskOnClick);
         Application.targetFrameRate = 60;
     }
     
@@ -32,9 +31,16 @@ public class NormMovement : MonoBehaviour
     {
 
         
-        verticalmovement = Input.GetAxis("Horizontal");
-        //verticalmovement = joystick.Horizontal;
-        transform.position += new Vector3(verticalmovement, 0, 0) * speed * Time.deltaTime;
+        horizontalmovementpc = Input.GetAxisRaw("Horizontal");
+        horizontalmovementphone = joystick.Horizontal;
+
+        //rigid.velocity = new Vector3(horizontalmovementpc * speed, rigid.velocity.y) * Time.deltaTime ;
+
+        //rigid.velocity = new Vector3(horizontalmovementphone * speed, rigid.velocity.y) * Time.deltaTime;
+
+        transform.position += new Vector3(horizontalmovementpc, 0, 0) * speed * Time.deltaTime;
+        transform.position += new Vector3(horizontalmovementphone, 0, 0) * speed * Time.deltaTime;
+
 
         if (Input.GetButtonDown("Jump") && Mathf.Abs(rigid.velocity.y) < 0.001f)
         {
@@ -42,9 +48,18 @@ public class NormMovement : MonoBehaviour
         }
     }
     public void TaskOnClick() {
-        rigid.AddForce(new Vector2(0, sprungkraft), ForceMode2D.Impulse);
+        if (Mathf.Abs(rigid.velocity.y) < 0.001f)
+        {
+            rigid.AddForce(new Vector2(0, sprungkraft), ForceMode2D.Impulse);
+        }
     }
 
 }
+
+    
+
+
+
+
 
 
