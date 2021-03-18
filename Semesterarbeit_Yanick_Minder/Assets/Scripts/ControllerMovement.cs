@@ -9,6 +9,7 @@ public class ControllerMovement : MonoBehaviour
     public CharacterController2D controller;
     public Joystick joystick;
     public Button Jump;
+    public Animator animator;
 
     public float speed = 0f;
 
@@ -20,6 +21,7 @@ public class ControllerMovement : MonoBehaviour
     
     public void Start()
     {
+        Application.targetFrameRate = 60;
         Button btn = Jump.GetComponent<Button>();
         btn.onClick.AddListener(jumpvoid);
     }
@@ -30,6 +32,10 @@ public class ControllerMovement : MonoBehaviour
         horizontalMove = Input.GetAxisRaw("Horizontal") * speed * Time.fixedDeltaTime;
         horizontalmovementphone = joystick.Horizontal * speed * Time.fixedDeltaTime;
 
+       
+        animator.SetFloat("speed", Mathf.Abs(horizontalMove));  
+        //animator.SetFloat("speed", Mathf.Abs(horizontalmovementphone));
+        
         if (Input.GetButtonDown("Jump"))
         {
             jump = true;
