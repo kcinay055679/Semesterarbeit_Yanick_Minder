@@ -23,22 +23,40 @@ public class ControllerMovement : MonoBehaviour
     {
         Application.targetFrameRate = 60;
         Button btn = Jump.GetComponent<Button>();
-        btn.onClick.AddListener(jumpvoid);
+        btn.onClick.AddListener(Jumpvoid);
     }
 
     // Update is called once per frame
     public void Update()
     {
-        horizontalMove = Input.GetAxisRaw("Horizontal") * speed * Time.fixedDeltaTime;
-        horizontalmovementphone = joystick.Horizontal * speed * Time.fixedDeltaTime;
+        horizontalMove = Input.GetAxisRaw("Horizontal") * speed;
+        horizontalmovementphone = joystick.Horizontal * speed;
 
-       
-        animator.SetFloat("speed", Mathf.Abs(horizontalMove));  
-        //animator.SetFloat("speed", Mathf.Abs(horizontalmovementphone));
+
+        //Animation control
+        if (horizontalMove < 0 || horizontalMove > 0) 
+        { 
+            animator.SetFloat("speed", Mathf.Abs(horizontalMove));  
+        }
+        
+        if (horizontalmovementphone < 0 || horizontalmovementphone > 0)
+        {
+            animator.SetFloat("speed", Mathf.Abs(horizontalmovementphone));
+        }
+
+        if (horizontalMove == 0&& horizontalmovementphone == 0)
+        {
+            animator.SetFloat("speed",0);
+        }
+        //Animation control end
+
+        
+        
         
         if (Input.GetButtonDown("Jump"))
         {
             jump = true;
+            animator.SetBool("isJump", true);
         }
 
         if (Input.GetKeyDown(KeyCode.LeftShift))
@@ -52,13 +70,19 @@ public class ControllerMovement : MonoBehaviour
     }
     public void FixedUpdate()
     {
-        controller.Move(horizontalMove, crouch, jump);
-        controller.Move(horizontalmovementphone, false, false);
+        controller.Move(horizontalMove * Time.fixedDeltaTime, crouch, jump);
+        controller.Move(horizontalmovementphone * Time.fixedDeltaTime, false, false);
         jump = false;
     }
-    void jumpvoid()
+    void Jumpvoid()
     {
         jump = true;
+        animator.SetBool("isJump", true);
+
+    }
+    public void OnLanding()
+    {
+        animator.SetBool("isJump", false);
 
     }
 }
