@@ -18,9 +18,11 @@ public class ControllerMovement : MonoBehaviour
     
     bool jump = false;
     bool crouch = false;
+    private Rigidbody2D rigid;
     
     public void Start()
     {
+        rigid = GetComponent<Rigidbody2D>();
         Application.targetFrameRate = 60;
         Button btn = Jump.GetComponent<Button>();
         btn.onClick.AddListener(Jumpvoid);
@@ -49,7 +51,11 @@ public class ControllerMovement : MonoBehaviour
             animator.SetFloat("speed",0);
         }
         //Animation control end
+        if (Mathf.Abs(rigid.velocity.y)< 0.001f)
+        {
+            //animator.SetBool("isJump", false);
 
+        }
         
         
         
@@ -83,6 +89,7 @@ public class ControllerMovement : MonoBehaviour
     public void OnLanding()
     {
         animator.SetBool("isJump", false);
+
 
     }
 }

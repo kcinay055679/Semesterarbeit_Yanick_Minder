@@ -10,11 +10,11 @@ public class CameraFollow : MonoBehaviour
     void Start()
     {
         
+        
     }
     public void Setup( Func<Vector3> GetCameraFollowPositionFunc )
     {
         this.GetCameraFollowPositionFunc = GetCameraFollowPositionFunc;
-
     }
 
     // Update is called once per frame
@@ -22,6 +22,8 @@ public class CameraFollow : MonoBehaviour
     {
         Vector3 cameraFollowPosition = GetCameraFollowPositionFunc();
         cameraFollowPosition.z = transform.position.z;
+        cameraFollowPosition.y -=  0.375f;
         transform.position = cameraFollowPosition;
     }
 }
+
