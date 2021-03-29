@@ -12,15 +12,15 @@ public class GenerateMap : MonoBehaviour
     public Transform playertransform;
     private void Start()
     {
-        CreateMapPart(MapParts[0], MainTilemap, 0);
         Debug.Log(order.Count);
+        CreateMapPart(MapParts[0], MainTilemap, order.Count);
     }
     private void Update()
     {
-        if ((order.Count * 19 ) < playertransform.position.x -19 && playertransform.position.x < (order.Count * 19 * 2))
+        if ((order.Count * 19 - 19) < playertransform.position.x && playertransform.position.x < (order.Count * 19 ))
         {
             NextPart = Random.Range(0, MapParts.Length);
-            CreateMapPart(MapParts[NextPart], MainTilemap, order.Count + 1);
+            CreateMapPart(MapParts[NextPart], MainTilemap, order.Count);
         }
     }
 
@@ -31,14 +31,11 @@ public class GenerateMap : MonoBehaviour
         int Destposy;
         int xdistance = 0 - ScrTilemap.cellBounds.min.x; 
         int ydistance = (-10) - ScrTilemap.cellBounds.min.y; 
-        if (partparam > 0)
-        {
-            part = order.Count + 1;
-        }
-        else
-        {
-            part = partparam;
-        }
+
+        
+        part = order.Count + 1;
+        
+        
         
         
 
