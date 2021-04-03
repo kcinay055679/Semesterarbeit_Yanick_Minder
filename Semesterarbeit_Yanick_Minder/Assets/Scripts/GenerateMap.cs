@@ -12,8 +12,8 @@ public class GenerateMap : MonoBehaviour
     public Transform playertransform;
     private void Start()
     {
-        Debug.Log(order.Count);
-        CreateMapPart(MapParts[0], MainTilemap, order.Count);
+        NextPart = Random.Range(0, MapParts.Length);
+        CreateMapPart(MapParts[NextPart], MainTilemap, order.Count);
     }
     private void Update()
     {
@@ -31,14 +31,8 @@ public class GenerateMap : MonoBehaviour
         int Destposy;
         int xdistance = 0 - ScrTilemap.cellBounds.min.x; 
         int ydistance = (-10) - ScrTilemap.cellBounds.min.y; 
-
-        
         part = order.Count + 1;
         
-        
-        
-        
-
         //Create new map part-start
         for (int Srcposx = ScrTilemap.cellBounds.min.x; Srcposx < ScrTilemap.cellBounds.max.x; Srcposx++)
         {
@@ -56,10 +50,5 @@ public class GenerateMap : MonoBehaviour
         }
         //Create new map part-end
         order.Add(ScrTilemap);
-    }
-    void CreateRandom()
-    {
-        NextPart = Random.Range(0, MapParts.Length);
-        CreateMapPart(MapParts[NextPart], MainTilemap, order.Count + 1);
     }
 }
