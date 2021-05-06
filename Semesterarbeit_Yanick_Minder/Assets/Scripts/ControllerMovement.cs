@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class ControllerMovement : MonoBehaviour
 {
@@ -18,6 +19,7 @@ public class ControllerMovement : MonoBehaviour
     
     bool jump = false;
     bool crouch = false;
+    public bool resistance = false;
     private Rigidbody2D rigid;
     
     public void Start()
@@ -25,7 +27,8 @@ public class ControllerMovement : MonoBehaviour
         rigid = GetComponent<Rigidbody2D>();
         Application.targetFrameRate = 60;
         Button btn = Jump.GetComponent<Button>();
-        btn.onClick.AddListener(Jumpvoid);
+        //btn.onClick.AddListener(Jumpvoid);
+        //btn.on
     }
 
     // Update is called once per frame
@@ -50,12 +53,7 @@ public class ControllerMovement : MonoBehaviour
         {
             animator.SetFloat("speed",0);
         }
-        //Animation control end
-        if (Mathf.Abs(rigid.velocity.y)< 0.001f)
-        {
-            //animator.SetBool("isJump", false);
-
-        }
+        
         
         
         
@@ -80,7 +78,7 @@ public class ControllerMovement : MonoBehaviour
         controller.Move(horizontalmovementphone * Time.fixedDeltaTime, false, false);
         jump = false;
     }
-    void Jumpvoid()
+    public void Jumpvoid()
     {
         jump = true;
         animator.SetBool("isJump", true);

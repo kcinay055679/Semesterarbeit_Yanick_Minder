@@ -4,75 +4,86 @@ using UnityEngine;
 
 public class Boomerang : MonoBehaviour
 {
-	// Start is called before the first frame update
-
-	[SerializeField] private LayerMask WhatIsGround;
-	[SerializeField] private Transform GroundCheck_0;
-	[SerializeField] private Transform GroundCheck_1;
-	const float GroundedRadius = .2f;
-	private bool grounded;
-	
-	public Transform playertransform;
-	Vector2 targetpos;
-	private float speed = 5;
-
-	void Start()
+    
+    private GameObject player;
+    private Rigidbody2D rigid;
+    private Vector2 targetpos;
+    public Vector2 startpos;
+    private float speed = 3f;
+    private float step;
+    public bool hited = false;
+    public bool grounded = false;
+    
+    void Start()
     {
-		//transform.position = new Vector3(transform.position.x + movespeed, transform.position.y);
-		 targetpos = playertransform.position;
-		Debug.Log(targetpos);
-	}
-	 
+        startpos = transform.position;
+        rigid = GetComponent<Rigidbody2D>();
+        player = GameObject.FindGameObjectWithTag("Player");
+        targetpos = player.transform.position;
+    }
 
-	// Update is called once per frame
-	void Update()
+    // Update is called once per frame
+    void Update()
     {
-		if(grounded == true)
-        {
-			StartCoroutine(WaitTillDestroy());
+        if (grounded && !hited)
+        {   
+            rigid.isKinematic = true;
+            step = speed * Time.deltaTime;
+            transform.Rotate(Vector3.forward * 140 * Time.deltaTime);
+            transform.position = Vector2.MoveTowards(transform.position, startpos, step);
+            
+            if (transform.position.y == startpos.y)
+            {
+                Destroy(gameObject);
+            }
         }
-        else
+        
+        if (!grounded && !hited)
         {
-			float step = speed * Time.deltaTime;
-			transform.Rotate(Vector3.forward * 450 * Time.deltaTime);
-			//speed *= Time.deltaTime;
-			transform.position = Vector2.MoveTowards(transform.position, targetpos, step);
-		}
-	}
-	void OnCollisionEnter2D( Collision2D other )
-	{
-		if (other.gameObject.CompareTag("Player"))
-		{
-			Debug.Log("Collision detected"); 
-		}
-	}
+            step = speed * Time.deltaTime;
+            transform.Rotate(Vector3.forward * 450 * Time.deltaTime);
+            transform.position = Vector2.MoveTowards(transform.position, targetpos, step);
+        }
+    }
+    void OnCollisionEnter2D( Collision2D other )
+    {
+        //resistance = GameObject.FindGameObjectWithTag("Player").GetComponent<ControllerMovement>().resistance;
+        if (other.gameObject.CompareTag("Player"))
+        {
+            if (GameObject.FindGameObjectWithTag("Player").GetComponent<ControllerMovement>().resistance == false)
+            {
+                hited = true;
+                rigid.isKinematic = false;
+                GameObject.Find("GameHandler").GetComponent<GameHandler>().Health -= 1;
+                GameObject.FindGameObjectWithTag("Player").GetComponent<ControllerMovement>().resistance = true;
+                StartCoroutine(WaitForResistance());
+            }
+        }
 
-	IEnumerator WaitTillDestroy()
-	{
-		yield return new WaitForSeconds(1.5f);
-		Destroy(gameObject);
-	}
+        if (other.gameObject.CompareTag("Ground"))
+        {
+            grounded = true;
+            if (hited)
+            {
+                StartCoroutine(WaitTillDestroy());
+            }
+        }
+    }
 
+    IEnumerator WaitTillDestroy()
+    {
+        yield return new WaitForSeconds(1.5f);
+        while (GameObject.FindGameObjectWithTag("Player").GetComponent<ControllerMovement>().resistance == false)
+        {
+            Destroy(gameObject);
+            break;
+        }
 
-	private void FixedUpdate()
-	{
-		grounded = false;
-
-		Collider2D[] colliders = Physics2D.OverlapCircleAll(GroundCheck_0.position, GroundedRadius, WhatIsGround);
-		for (int i = 0; i < colliders.Length; i++)
-		{
-			if (colliders[i].gameObject != gameObject)
-			{
-				grounded = true;
-			}
-		}
-		Collider2D[] colliders1 = Physics2D.OverlapCircleAll(GroundCheck_1.position, GroundedRadius, WhatIsGround);
-		for (int i = 0; i < colliders1.Length; i++)
-		{
-			if (colliders1[i].gameObject != gameObject)
-			{
-				grounded = true;
-			}
-		}
-	}
+    }
+    IEnumerator WaitForResistance()
+    {
+        yield return new WaitForSeconds(1);
+        Destroy(gameObject);
+        GameObject.FindGameObjectWithTag("Player").GetComponent<ControllerMovement>().resistance = false;
+    }
 }
