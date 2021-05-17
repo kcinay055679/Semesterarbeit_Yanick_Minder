@@ -37,12 +37,15 @@ public class Boomerang : MonoBehaviour
                 Destroy(gameObject);
             }
         }
-        
         if (!grounded && !hited)
         {
             step = speed * Time.deltaTime;
             transform.Rotate(Vector3.forward * 450 * Time.deltaTime);
             transform.position = Vector2.MoveTowards(transform.position, targetpos, step);
+        }
+        if (transform.position.y < -9)
+        {
+            Destroy(gameObject);
         }
     }
     void OnCollisionEnter2D( Collision2D other )

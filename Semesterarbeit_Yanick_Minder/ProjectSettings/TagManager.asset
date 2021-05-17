@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Boomerang
   - Ground
+  - Heart
+  - CanvesUI
   layers:
   - Default
   - TransparentFX

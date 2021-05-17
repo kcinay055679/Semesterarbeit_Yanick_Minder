@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.EventSystems;
 
-public class ButtonScript : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+public class JumpButtonScript : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     public ControllerMovement control;
     void Update()

@@ -11,6 +11,7 @@ public class ControllerMovement : MonoBehaviour
     public Joystick joystick;
     public Button Jump;
     public Animator animator;
+   
 
     public float speed = 0f;
 
@@ -18,17 +19,12 @@ public class ControllerMovement : MonoBehaviour
     float horizontalmovementphone = 0f;
     
     bool jump = false;
-    bool crouch = false;
+    public bool crouch = false;
     public bool resistance = false;
-    private Rigidbody2D rigid;
     
     public void Start()
     {
-        rigid = GetComponent<Rigidbody2D>();
         Application.targetFrameRate = 60;
-        Button btn = Jump.GetComponent<Button>();
-        //btn.onClick.AddListener(Jumpvoid);
-        //btn.on
     }
 
     // Update is called once per frame
@@ -74,8 +70,15 @@ public class ControllerMovement : MonoBehaviour
     }
     public void FixedUpdate()
     {
-        controller.Move(horizontalMove * Time.fixedDeltaTime, crouch, jump);
-        controller.Move(horizontalmovementphone * Time.fixedDeltaTime, false, false);
+        if (SystemInfo.deviceType == DeviceType.Desktop)
+        {
+            controller.Move(horizontalMove * Time.fixedDeltaTime, crouch, jump);
+        }
+
+        if (SystemInfo.deviceType == DeviceType.Handheld)
+        {
+            controller.Move(horizontalmovementphone * Time.fixedDeltaTime, crouch, jump);
+        }
         jump = false;
     }
     public void Jumpvoid()
@@ -87,7 +90,9 @@ public class ControllerMovement : MonoBehaviour
     public void OnLanding()
     {
         animator.SetBool("isJump", false);
-
-
+    }
+    public void onCrouching(bool isCrouching)
+    {
+        animator.SetBool("isCrouching", isCrouching);
     }
 }

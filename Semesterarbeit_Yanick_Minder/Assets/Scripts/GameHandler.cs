@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Tilemaps;
+using TMPro;
 
 
 public class GameHandler : MonoBehaviour
@@ -12,11 +13,15 @@ public class GameHandler : MonoBehaviour
     public Transform playertransform;
     public Camera Cam;
     public GameObject Boomerang;
-    public Text HealthOnUI;
-    public Text ScoreOnUI;
-    public Text HighScoreOnUI;
+    public TextMeshProUGUI ScoreOnUI;
+    public TextMeshProUGUI HighScoreOnUI;
     public Tilemap MainTilemap;
+    public GameObject JumpButton;
+    public GameObject CrouchButton;
+    public GameObject Movement;
+    public GameObject HeartOnUI;
     public int Health = 3;
+    private int LastHealth;
 
     private float nextActionTime = 0f;
     int highestlocalScore;
@@ -26,27 +31,37 @@ public class GameHandler : MonoBehaviour
 
     private void Start()
     {
+        
+        if (SystemInfo.deviceType == DeviceType.Handheld)
+        {
+            JumpButton.SetActive(true);
+            Movement.SetActive(true);
+            CrouchButton.SetActive(true);
+        }
         cameraFollow.Setup(() => playertransform.position);
-    }
 
+        for (int j = 0; j < Health; j++)
+        {
+            var new_Heart = Instantiate(HeartOnUI, new Vector3(-100-(j*130), -100, 0), Quaternion.identity);
+            new_Heart.transform.SetParent(GameObject.FindGameObjectWithTag("CanvesUI").transform, false);
+        }
+        LastHealth = Health;
+    }
+    
     // Update is called once per frame
     void Update()
     {
-        float y;
         float x;
         float startx;
         if (Time.time > nextActionTime) { 
             nextActionTime = Time.time + period;
-            y = playertransform.position.y + Cam.orthographicSize;
             x = Cam.orthographicSize * Cam.aspect;
             startx = Random.Range(playertransform.position.x - x, playertransform.position.x + x);
             Instantiate(Boomerang, new Vector3( startx, 13, 0), Quaternion.identity);
         }
 
-        if(HealthOnUI.text != "HP " + Health)
-        {
-            HealthOnUI.text = "HP: "+ Health;
-        }
+        
+
         if (ScoreOnUI.text != "Score: " + (int) playertransform.position.x && (int) playertransform.position.x > highestlocalScore)
         {
             highestlocalScore = (int) playertransform.position.x;
@@ -56,20 +71,35 @@ public class GameHandler : MonoBehaviour
                 highscore = highestlocalScore;
             }
         }
+
         if (HighScoreOnUI.text != "Highscore: " + highscore)
         {
             HighScoreOnUI.text = "Highscore: " + highestlocalScore;
             highscore = highestlocalScore;
         }
 
-        if (Health == 0)
+        if (LastHealth != Health)
         {
+            var Hearts = GameObject.FindGameObjectsWithTag("Heart");
+            for (int i = 0; i < Hearts.Length; i++)
+            {
+                int lastelement = Hearts.Length - 1;
+                Destroy(Hearts[lastelement]);
+                LastHealth = Health;
+            }
+        }
 
+        
+
+        if (Health == 0)
+        {   
+            //Delete existing boomerangs
             var Boomerangs = GameObject.FindGameObjectsWithTag("Boomerang");
             for (int i = 0; i< Boomerangs.Length; i++)
             {
                 Destroy(Boomerangs[i]);
             }
+            //Reset map
             for (int Srcposx = 19; Srcposx < MainTilemap.cellBounds.max.x; Srcposx++)
             {
                 for (int Srcposy = MainTilemap.cellBounds.min.y; Srcposy < MainTilemap.cellBounds.max.y; Srcposy++)
@@ -80,10 +110,21 @@ public class GameHandler : MonoBehaviour
             }
             GetComponent<GenerateMap>().partcounter = 1;
             MainTilemap.CompressBounds();
+
+            //Reset the player variables
             playertransform.position = new Vector2(1,-0.4f);
             Health = 3;
             highestlocalScore = 0;
             GameObject.FindGameObjectWithTag("Player").GetComponent<ControllerMovement>().resistance = false;
+
+
+            //Create new hearts
+            for (int j = 0; j < Health; j++)
+            {
+                var new_Heart = Instantiate(HeartOnUI, new Vector3(-100 - (j * 130), -100, 0), Quaternion.identity);
+                new_Heart.transform.SetParent(GameObject.FindGameObjectWithTag("CanvesUI").transform, false);
+            }
+            LastHealth = Health;
         }
     }
 }
