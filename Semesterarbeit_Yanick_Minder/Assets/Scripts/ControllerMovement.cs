@@ -18,7 +18,7 @@ public class ControllerMovement : MonoBehaviour
     float horizontalMove = 0f;
     float horizontalmovementphone = 0f;
     
-    bool jump = false;
+    public bool jump = false;
     public bool crouch = false;
     public bool resistance = false;
     

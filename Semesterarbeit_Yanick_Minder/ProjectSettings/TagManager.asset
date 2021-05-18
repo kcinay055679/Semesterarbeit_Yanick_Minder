@@ -8,6 +8,7 @@ TagManager:
   - Ground
   - Heart
   - CanvesUI
+  - HighscoreTable
   layers:
   - Default
   - TransparentFX

@@ -11,8 +11,6 @@ public class JumpButtonScript : MonoBehaviour, IPointerDownHandler, IPointerUpHa
         {
             control.Jumpvoid();
         }
-        
-        
     }
     bool ispressed = false;
     public void OnPointerDown( PointerEventData eventData )

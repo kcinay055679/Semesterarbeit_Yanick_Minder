@@ -31,7 +31,7 @@ public class GameHandler : MonoBehaviour
 
     private void Start()
     {
-        
+        //If Smartphone set buttons visible
         if (SystemInfo.deviceType == DeviceType.Handheld)
         {
             JumpButton.SetActive(true);
@@ -40,6 +40,7 @@ public class GameHandler : MonoBehaviour
         }
         cameraFollow.Setup(() => playertransform.position);
 
+        //Create hearts
         for (int j = 0; j < Health; j++)
         {
             var new_Heart = Instantiate(HeartOnUI, new Vector3(-100-(j*130), -100, 0), Quaternion.identity);
@@ -111,12 +112,15 @@ public class GameHandler : MonoBehaviour
             GetComponent<GenerateMap>().partcounter = 1;
             MainTilemap.CompressBounds();
 
+            GameObject.FindGameObjectWithTag("Player").GetComponent<ControllerMovement>().resistance = false;
+            Highscore.highscores.Add(new highscore(highestlocalScore, "Yanick"));
+            //var highscores = GameObject.FindGameObjectWithTag("HighscoreTable").GetComponent<Highscore>().highscores;
+
             //Reset the player variables
             playertransform.position = new Vector2(1,-0.4f);
             Health = 3;
             highestlocalScore = 0;
-            GameObject.FindGameObjectWithTag("Player").GetComponent<ControllerMovement>().resistance = false;
-
+            
 
             //Create new hearts
             for (int j = 0; j < Health; j++)
