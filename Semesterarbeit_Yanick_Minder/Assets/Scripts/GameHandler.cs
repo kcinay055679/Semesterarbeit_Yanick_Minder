@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Tilemaps;
 using TMPro;
+using System.IO;
 
 
 public class GameHandler : MonoBehaviour
@@ -26,11 +27,13 @@ public class GameHandler : MonoBehaviour
     private float nextActionTime = 0f;
     int highestlocalScore;
     int highscore = 0;
-    float period = 1f;
-    
+    float period = 0.65f;
+    PlayerData data;
 
     private void Start()
     {
+        data = SaveSystem.LoadGame();
+
         //If Smartphone set buttons visible
         if (SystemInfo.deviceType == DeviceType.Handheld)
         {
@@ -40,7 +43,12 @@ public class GameHandler : MonoBehaviour
         }
         cameraFollow.Setup(() => playertransform.position);
 
+
+
+        highscore = Highscore.highscores[Highscore.highscores.Count-1].Score;
+        
         //Create hearts
+
         for (int j = 0; j < Health; j++)
         {
             var new_Heart = Instantiate(HeartOnUI, new Vector3(-100-(j*130), -100, 0), Quaternion.identity);
@@ -52,9 +60,11 @@ public class GameHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float x;
-        float startx;
-        if (Time.time > nextActionTime) { 
+        
+        if (Time.time > nextActionTime) {
+            float x;
+            float startx;
+
             nextActionTime = Time.time + period;
             x = Cam.orthographicSize * Cam.aspect;
             startx = Random.Range(playertransform.position.x - x, playertransform.position.x + x);
@@ -112,10 +122,27 @@ public class GameHandler : MonoBehaviour
             GetComponent<GenerateMap>().partcounter = 1;
             MainTilemap.CompressBounds();
 
+            string Playername;
             GameObject.FindGameObjectWithTag("Player").GetComponent<ControllerMovement>().resistance = false;
-            Highscore.highscores.Add(new highscore(highestlocalScore, "Yanick"));
-            //var highscores = GameObject.FindGameObjectWithTag("HighscoreTable").GetComponent<Highscore>().highscores;
 
+            
+            int lastimportantelement;
+            if (data.RankScores.Length > 5)
+            {
+                lastimportantelement = 4;
+            }
+            else
+            {
+                lastimportantelement = data.RankScores.Length - 1;
+            }
+            
+            if (data.RankScores.Length > 0 || highestlocalScore > data.RankScores[lastimportantelement])
+            {   
+                //Spieler nach Namen fragen
+                Playername = "Yanick";
+                Highscore.highscores.Add(new highscore(highestlocalScore, Playername));
+            }
+            
             //Reset the player variables
             playertransform.position = new Vector2(1,-0.4f);
             Health = 3;
@@ -129,6 +156,8 @@ public class GameHandler : MonoBehaviour
                 new_Heart.transform.SetParent(GameObject.FindGameObjectWithTag("CanvesUI").transform, false);
             }
             LastHealth = Health;
+
+            SaveSystem.SaveGame();
         }
     }
 }

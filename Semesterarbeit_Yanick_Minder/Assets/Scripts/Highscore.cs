@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System.Linq;
+using System.IO;
 
 public class Highscore : MonoBehaviour
 {
@@ -15,13 +16,13 @@ public class Highscore : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
-        highscores.Add(new highscore(1000, "Yanick"));
-        //highscores.Add(new highscore(900, "Yanick"));
-        //highscores.Add(new highscore(800, "Yanick"));
-        //highscores.Add(new highscore(700, "Yanick"));
+        PlayerData data = SaveSystem.LoadGame();
 
-        highscores = highscores.OrderBy(highscores => highscores.Score).ToList();
+        
+        
+        List<highscore> SortedHighscores = highscores.OrderBy(highscores => highscores.Score).ToList();
+        SortedHighscores.Reverse();
+
         if (highscores.Count < maxranks)
         {
             maxranks = highscores.Count;
@@ -36,10 +37,10 @@ public class Highscore : MonoBehaviour
             Position.text = i+1+".";
 
             TextMeshProUGUI Score = NewRank.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
-            Score.text = highscores[i].Score + "";
+            Score.text = SortedHighscores[i].Score + "";
 
             TextMeshProUGUI Name = NewRank.transform.GetChild(2).GetComponent<TextMeshProUGUI>();
-            Name.text = highscores[i].Name + "";
+            Name.text = SortedHighscores[i].Name + "";
 
             if (i==0)
             {
