@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.Tilemaps;
 using TMPro;
 using System.IO;
+using System.Linq;
 
 
 public class GameHandler : MonoBehaviour
@@ -23,12 +24,22 @@ public class GameHandler : MonoBehaviour
     public GameObject HeartOnUI;
     public int Health = 3;
     private int LastHealth;
+    public GameObject AskName;
+    public GameObject Spike;
 
-    private float nextActionTime = 0f;
+
+    public static List<string> Playernames = new List<string>();
+
+    private float BoomerangnextActionTime = 0f;
+    float Boomerangperiod = 0.65f;
+
+    private float SpikePeriod = 8.5f;
+    private float SpikeNextActionTime = 0f;
     int highestlocalScore;
     int highscore = 0;
-    float period = 0.65f;
+    
     PlayerData data;
+    public string Playername;
 
     private void Start()
     {
@@ -44,9 +55,11 @@ public class GameHandler : MonoBehaviour
         cameraFollow.Setup(() => playertransform.position);
 
 
-
-        highscore = Highscore.highscores[Highscore.highscores.Count-1].Score;
         
+        highscore = Highscore.highscores[0].Score;
+        HighScoreOnUI.text = "Highscore: " + highscore;
+
+
         //Create hearts
 
         for (int j = 0; j < Health; j++)
@@ -61,32 +74,40 @@ public class GameHandler : MonoBehaviour
     void Update()
     {
         
-        if (Time.time > nextActionTime) {
+        if (Time.time > BoomerangnextActionTime) {
             float x;
             float startx;
 
-            nextActionTime = Time.time + period;
+            BoomerangnextActionTime = Time.time + Boomerangperiod;
             x = Cam.orthographicSize * Cam.aspect;
             startx = Random.Range(playertransform.position.x - x, playertransform.position.x + x);
             Instantiate(Boomerang, new Vector3( startx, 13, 0), Quaternion.identity);
         }
 
         
+        if (Time.time > SpikeNextActionTime)
+        {
+            //Action
+            SpikeNextActionTime = Time.time + SpikePeriod;
+            float Spikex = playertransform.position.x + Random.Range(19,38);
+            float Spikey = Random.Range(3f, -4.5f);
+            Instantiate(Spike, new Vector3(Spikex, Spikey, 0), Quaternion.identity);
 
-        if (ScoreOnUI.text != "Score: " + (int) playertransform.position.x && (int) playertransform.position.x > highestlocalScore)
+        }
+        
+
+
+        
+        //if (highestlocalScore > highscore )
+        if (ScoreOnUI.text != "Score: " + (int) playertransform.position.x && (int) playertransform.position.x > highestlocalScore )
         {
             highestlocalScore = (int) playertransform.position.x;
             ScoreOnUI.text = "Score: " + highestlocalScore;
-            if (highscore< highestlocalScore)
+            if (highscore < highestlocalScore)
             {
                 highscore = highestlocalScore;
+                HighScoreOnUI.text = "Highscore: " + highestlocalScore;
             }
-        }
-
-        if (HighScoreOnUI.text != "Highscore: " + highscore)
-        {
-            HighScoreOnUI.text = "Highscore: " + highestlocalScore;
-            highscore = highestlocalScore;
         }
 
         if (LastHealth != Health)
@@ -122,7 +143,7 @@ public class GameHandler : MonoBehaviour
             GetComponent<GenerateMap>().partcounter = 1;
             MainTilemap.CompressBounds();
 
-            string Playername;
+            
             GameObject.FindGameObjectWithTag("Player").GetComponent<ControllerMovement>().resistance = false;
 
             
@@ -137,16 +158,22 @@ public class GameHandler : MonoBehaviour
             }
             
             if (data.RankScores.Length > 0 || highestlocalScore > data.RankScores[lastimportantelement])
-            {   
-                //Spieler nach Namen fragen
-                Playername = "Yanick";
-                Highscore.highscores.Add(new highscore(highestlocalScore, Playername));
+            {
+                if (AskName.activeSelf == false)
+                {
+                    AskName.SetActive(true);
+                    AskName.GetComponent<AskName>().startshow();
+                }
+                
+                AskName.transform.GetChild(1).GetComponent<TMP_InputField>().text = Playername;
+                Time.timeScale = 0f;
+                
             }
             
             //Reset the player variables
-            playertransform.position = new Vector2(1,-0.4f);
+            playertransform.position = new Vector2(1,0.55f);
             Health = 3;
-            highestlocalScore = 0;
+            
             
 
             //Create new hearts
@@ -157,7 +184,27 @@ public class GameHandler : MonoBehaviour
             }
             LastHealth = Health;
 
-            SaveSystem.SaveGame();
+            
+        }
+    }
+    
+    public void GetName()
+    {
+        Playername = GameObject.FindGameObjectWithTag("AskInput").GetComponent<TMP_InputField>().text;
+        Time.timeScale = 1f;
+        Playernames.Add(Playername);
+        
+        Highscore.highscores.Add(new highscore(highestlocalScore, Playername));
+        SaveSystem.SaveGame();
+        highestlocalScore = 0;
+    }
+
+    public void DestroyOldNamePrefabs()
+    {
+        GameObject[] OldPrefabs = GameObject.FindGameObjectsWithTag("EnterName");
+        for (int i = 0; i < OldPrefabs.Length; i++)
+        {
+            Destroy(OldPrefabs[i]);
         }
     }
 }

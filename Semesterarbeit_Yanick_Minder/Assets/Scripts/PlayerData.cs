@@ -9,6 +9,7 @@ public class PlayerData
     
     public int[] RankScores = new int [Highscore.highscores.Count];
     public string[] RankNames  = new string [Highscore.highscores.Count];
+    public string[] Playernames = new string[GameHandler.Playernames.Count];
 
     public PlayerData()
     {
@@ -16,6 +17,13 @@ public class PlayerData
         {
             RankNames[i] = Highscore.highscores[i].Name;
             RankScores[i] = Highscore.highscores[i].Score;
+        }
+        
+
+        for (int i = 0; i < GameHandler.Playernames.Count; i++)
+        {
+            Playernames[i] = GameHandler.Playernames[i];
+
         }
     }
 }

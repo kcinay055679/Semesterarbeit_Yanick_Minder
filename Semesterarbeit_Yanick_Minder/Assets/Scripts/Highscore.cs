@@ -19,9 +19,7 @@ public class Highscore : MonoBehaviour
         PlayerData data = SaveSystem.LoadGame();
 
         
-        
-        List<highscore> SortedHighscores = highscores.OrderBy(highscores => highscores.Score).ToList();
-        SortedHighscores.Reverse();
+
 
         if (highscores.Count < maxranks)
         {
@@ -37,10 +35,10 @@ public class Highscore : MonoBehaviour
             Position.text = i+1+".";
 
             TextMeshProUGUI Score = NewRank.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
-            Score.text = SortedHighscores[i].Score + "";
+            Score.text = highscores[i].Score + "";
 
             TextMeshProUGUI Name = NewRank.transform.GetChild(2).GetComponent<TextMeshProUGUI>();
-            Name.text = SortedHighscores[i].Name + "";
+            Name.text = highscores[i].Name + "";
 
             if (i==0)
             {
