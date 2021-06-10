@@ -12,6 +12,7 @@ TagManager:
   - AskName
   - AskInput
   - EnterName
+  - GameHandler
   layers:
   - Default
   - TransparentFX
